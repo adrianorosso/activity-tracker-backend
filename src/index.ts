@@ -1,15 +1,26 @@
-import express from "express";
 import "reflect-metadata";
+// import { createConnection } from "typeorm";
+import { createRoutes } from "./routes";
 
-const PORT = 3000;
+const main = () => {
+  // createConnection({
+  //   type: "postgres",
+  //   host: "localhost",
+  //   port: 5432,
+  //   username: "postgres",
+  //   password: "postgres",
+  //   database: "activities_db",
+  //   entities: [__dirname + "/entity/*.js"],
+  //   logging: true,
+  //   synchronize: true,
+  // })
+  //   .then((connection) => {
+  //     // here you can start to work with your entities
+  //     console.log("Creating tables");
+  //   })
+  //   .catch((error) => console.log(error));
 
-const app = express();
-app.use(express.json());
+  createRoutes();
+};
 
-app.use("/", (_, res) => {
-  res.send("OK");
-});
-
-app.listen(PORT, () => {
-  console.log(`>>> Server listening to port: ${PORT}`);
-});
+main();
