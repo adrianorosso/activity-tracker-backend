@@ -1,4 +1,5 @@
 import express from "express";
+import "reflect-metadata";
 
 const PORT = 3000;
 
