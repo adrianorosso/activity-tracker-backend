@@ -2,12 +2,17 @@ import express from "express";
 import { Connection, getConnection, getRepository } from "typeorm";
 import { Activity } from "./entity/activity";
 import { IActivity } from "./interface/activity";
+import cors from "cors";
 
+// TODO: error handling
+// TODO: change all to query builder
 export const createRoutes = (dbConnection: Connection) => {
   const app = express();
+  app.use(cors());
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-  const PORT = 3000;
+  const PORT = 4000;
 
   app.get("/activity", async (_, res) => {
     const activities = await dbConnection.getRepository(Activity).find();
