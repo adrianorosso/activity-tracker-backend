@@ -60,6 +60,26 @@ export const createRoutes = (dbConnection: Connection) => {
     }
   });
 
+  app.get("activity-item", async (req, res) => {
+    res.send("List activity items");
+  });
+
+  app.get("activity-item/:id", (req, res) => {
+    res.send("Get specific activity item");
+  });
+
+  app.post("activity-item", (req, res) => {
+    res.send("Create new activity item");
+  });
+
+  app.put("activity-item/:id", (req, res) => {
+    res.send("Update specific activity item");
+  });
+
+  app.delete("activity-item/:id", (req, res) => {
+    res.send("Delete new activity item");
+  });
+
   app.use((_, res) => {
     res.sendStatus(404).send("address not found");
   });
