@@ -23,6 +23,15 @@ export const createRoutes = (dbConnection: Connection) => {
     res.send({ activities: activities });
   });
 
+  app.get("/activity/:id", async (req, res) => {
+    const activity = await dbConnection
+      .getRepository(Activity)
+      .createQueryBuilder("act")
+      .where("act.id = :id", { id: +req.params.id })
+      .getOne();
+    res.send({ activity });
+  });
+
   app.post("/activity", async (req, res) => {
     const newActivity = new Activity();
     const { name, description } = req.body as IActivity;
@@ -119,6 +128,7 @@ export const createRoutes = (dbConnection: Connection) => {
   });
 
   app.delete("/activity-item/:id", (req, res) => {
+    // @TODO
     res.send("Delete new activity item");
   });
 
