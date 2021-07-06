@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+} from "typeorm";
+import { Activity } from "./activity";
 
 @Entity()
 export class ActivityItem extends BaseEntity {
@@ -8,9 +15,12 @@ export class ActivityItem extends BaseEntity {
   @Column()
   startTime!: string;
 
-  @Column()
+  @Column({ nullable: true })
   endTime!: string;
 
-  @Column()
+  @Column({ nullable: true })
   duration!: string;
+
+  @ManyToOne(() => Activity, (activity) => activity.items)
+  activity!: Activity;
 }

@@ -1,5 +1,7 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { Activity } from "./entity/activity";
+import { ActivityItem } from "./entity/activity-item";
 import { createRoutes } from "./routes";
 
 const main = async () => {
@@ -17,6 +19,9 @@ const main = async () => {
       logging: true,
       synchronize: true,
     });
+
+    // await connection.getRepository(ActivityItem).delete({});
+    // await connection.getRepository(Activity).delete({});
   } catch (error) {
     console.log(error);
     throw Error("connection failed");

@@ -3,6 +3,9 @@ import { Connection, getConnection, getRepository } from "typeorm";
 import { Activity } from "./entity/activity";
 import { IActivity } from "./interface/activity";
 import cors from "cors";
+import { ActivityItem } from "./entity/activity-item";
+import convertMsToTime from "./utils/convert-ms-to-time";
+import { getCurrentTime } from "./utils/get-current-time";
 
 // TODO: error handling
 // TODO: change all to query builder
@@ -14,6 +17,7 @@ export const createRoutes = (dbConnection: Connection) => {
 
   const PORT = 4000;
 
+  // === Activity ===
   app.get("/activity", async (_, res) => {
     const activities = await dbConnection.getRepository(Activity).find();
     res.send({ activities: activities });
@@ -25,8 +29,7 @@ export const createRoutes = (dbConnection: Connection) => {
 
     newActivity.name = name;
     newActivity.description = description;
-    newActivity.creationDate = new Date().toISOString();
-
+    newActivity.creationDate = getCurrentTime();
     const saved = await newActivity.save();
 
     res.send({ created: saved });
@@ -60,23 +63,56 @@ export const createRoutes = (dbConnection: Connection) => {
     }
   });
 
-  app.get("activity-item", async (req, res) => {
+  app.get("/activity-item", async (req, res) => {
     res.send("List activity items");
   });
 
-  app.get("activity-item/:id", (req, res) => {
+  app.get("/activity-item/:id", (req, res) => {
     res.send("Get specific activity item");
   });
 
-  app.post("activity-item", (req, res) => {
-    res.send("Create new activity item");
+  // === Activity Item ===
+  app.post("/activity-item", async (req, res) => {
+    const newActivityItem = new ActivityItem();
+    newActivityItem.startTime = getCurrentTime();
+    newActivityItem.activity = req.body.activity;
+
+    const saved = await newActivityItem.save();
+
+    res.send({ saved: saved });
   });
 
-  app.put("activity-item/:id", (req, res) => {
-    res.send("Update specific activity item");
+  app.put("/activity-item/:id", async (req, res) => {
+    const id = +req.params.id;
+
+    const current = await dbConnection
+      .getRepository(ActivityItem)
+      .createQueryBuilder("item")
+      .where("item.id = :id", { id })
+      .getOne();
+
+    const end = getCurrentTime();
+    const duration = convertMsToTime(
+      Date.parse(end) - Date.parse(current!.startTime)
+    );
+
+    await dbConnection
+      .createQueryBuilder()
+      .update(ActivityItem)
+      .set({ endTime: end, duration: duration })
+      .where("id = :id", { id })
+      .execute();
+
+    const updated = await dbConnection
+      .getRepository(ActivityItem)
+      .createQueryBuilder("item")
+      .where("item.id = :id", { id })
+      .getOne();
+
+    res.send({ updated: updated });
   });
 
-  app.delete("activity-item/:id", (req, res) => {
+  app.delete("/activity-item/:id", (req, res) => {
     res.send("Delete new activity item");
   });
 

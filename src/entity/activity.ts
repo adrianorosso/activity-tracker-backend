@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToMany,
+} from "typeorm";
+import { ActivityItem } from "./activity-item";
 
 @Entity()
 export class Activity extends BaseEntity {
@@ -13,4 +20,7 @@ export class Activity extends BaseEntity {
 
   @Column()
   creationDate!: string;
+
+  @OneToMany(() => ActivityItem, (item) => item.activity)
+  items!: ActivityItem[];
 }
