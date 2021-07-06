@@ -51,7 +51,7 @@ export const createRoutes = (dbConnection: Connection) => {
       .where("act.id = :id", { id: id })
       .getOne();
 
-    res.send({ updated: updated });
+    res.send({ updated });
   });
 
   app.delete("/activity/:id", async (req, res) => {
@@ -59,16 +59,22 @@ export const createRoutes = (dbConnection: Connection) => {
     const element = await repo.findOne(req.params.id);
     if (element) {
       const removed = await repo.remove(element);
-      res.send({ removed: removed });
+      res.send({ removed });
     }
   });
 
   app.get("/activity-item", async (req, res) => {
-    res.send("List activity items");
+    const items = await dbConnection.getRepository(ActivityItem).find();
+    res.send({ items });
   });
 
-  app.get("/activity-item/:id", (req, res) => {
-    res.send("Get specific activity item");
+  app.get("/activity-item/:id", async (req, res) => {
+    const item = await dbConnection
+      .getRepository(ActivityItem)
+      .createQueryBuilder("item")
+      .where("item.id = :id", { id: +req.params.id })
+      .getOne();
+    res.send({ item });
   });
 
   // === Activity Item ===
@@ -79,7 +85,7 @@ export const createRoutes = (dbConnection: Connection) => {
 
     const saved = await newActivityItem.save();
 
-    res.send({ saved: saved });
+    res.send({ saved });
   });
 
   app.put("/activity-item/:id", async (req, res) => {
@@ -109,7 +115,7 @@ export const createRoutes = (dbConnection: Connection) => {
       .where("item.id = :id", { id })
       .getOne();
 
-    res.send({ updated: updated });
+    res.send({ updated });
   });
 
   app.delete("/activity-item/:id", (req, res) => {
