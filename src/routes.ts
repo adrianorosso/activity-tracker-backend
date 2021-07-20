@@ -7,7 +7,6 @@ import { ActivityItem } from "./entity/activity-item";
 import convertMsToTime from "./utils/convert-ms-to-time";
 import { getCurrentTime } from "./utils/get-current-time";
 
-// TODO: change all to query builder
 export const createRoutes = (dbConnection: Connection) => {
   const app = express();
   app.use(cors());
@@ -19,6 +18,7 @@ export const createRoutes = (dbConnection: Connection) => {
   // === Activity ===
   app.get("/activity", async (req: express.Request, res: express.Response) => {
     const activities = await dbConnection.getRepository(Activity).find();
+    // In case the join is needed -> .find({ relations: ["items"] });
     res.send({ activities: activities });
   });
 
@@ -83,7 +83,11 @@ export const createRoutes = (dbConnection: Connection) => {
   app.get(
     "/activity-item",
     async (req: express.Request, res: express.Response) => {
-      const items = await dbConnection.getRepository(ActivityItem).find();
+      // NOTE: It is needed to indicate the "relations" when getting objects
+      // Otherwise the join is not done
+      const items = await dbConnection
+        .getRepository(ActivityItem)
+        .find({ relations: ["activity"] });
       res.status(200).send({ items });
     }
   );
