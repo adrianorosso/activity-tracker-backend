@@ -80,6 +80,7 @@ export const createRoutes = (dbConnection: Connection) => {
     }
   );
 
+  // === Activity Item ===
   app.get(
     "/activity-item",
     async (req: express.Request, res: express.Response) => {
@@ -87,7 +88,7 @@ export const createRoutes = (dbConnection: Connection) => {
       // Otherwise the join is not done
       const items = await dbConnection
         .getRepository(ActivityItem)
-        .find({ relations: ["activity"] });
+        .find({ relations: ["activity"], order: { startTime: "DESC" } });
       res.status(200).send({ items });
     }
   );
@@ -104,7 +105,6 @@ export const createRoutes = (dbConnection: Connection) => {
     }
   );
 
-  // === Activity Item ===
   app.post(
     "/activity-item",
     async (req: express.Request, res: express.Response) => {
