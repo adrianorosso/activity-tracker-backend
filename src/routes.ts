@@ -144,6 +144,7 @@ export const createRoutes = (dbConnection: Connection) => {
       const updated = await dbConnection
         .getRepository(ActivityItem)
         .createQueryBuilder("item")
+        .leftJoinAndSelect("item.activity", "activity")
         .where("item.id = :id", { id })
         .getOne();
 
