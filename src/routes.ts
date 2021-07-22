@@ -41,9 +41,9 @@ export const createRoutes = (dbConnection: Connection) => {
     newActivity.name = name;
     newActivity.description = description;
     newActivity.creationDate = getCurrentTime();
-    const saved = await newActivity.save();
+    const created = await newActivity.save();
 
-    res.status(200).send({ created: saved });
+    res.status(200).send({ created });
   });
 
   app.put(
@@ -73,6 +73,7 @@ export const createRoutes = (dbConnection: Connection) => {
     async (req: express.Request, res: express.Response) => {
       const repo = await dbConnection.getRepository(Activity);
       const element = await repo.findOne(req.params.id);
+      // @TODO: work on deletion with foreign key
       if (element) {
         const removed = await repo.remove(element);
         res.status(200).send({ removed });
@@ -114,7 +115,11 @@ export const createRoutes = (dbConnection: Connection) => {
 
       const saved = await newActivityItem.save();
 
-      res.status(200).send({ saved });
+      const created = await dbConnection
+        .getRepository(ActivityItem)
+        .findOne({ where: { id: saved.id }, relations: ["activity"] });
+
+      res.status(200).send({ created });
     }
   );
 
