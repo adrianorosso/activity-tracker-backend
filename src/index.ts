@@ -6,6 +6,7 @@ import { createRoutes } from "./routes";
 
 const main = async () => {
   let connection;
+  const DB_NAME = "activities_db";
 
   try {
     connection = await createConnection({
@@ -14,12 +15,13 @@ const main = async () => {
       port: 5432,
       username: "postgres",
       password: "postgres",
-      database: "activities_db",
+      database: DB_NAME,
       entities: [__dirname + "/entity/*.js"],
       logging: true,
       synchronize: true,
     });
 
+    // WARNING: Clean all the dataabase data
     // await connection.getRepository(ActivityItem).delete({});
     // await connection.getRepository(Activity).delete({});
   } catch (error) {
